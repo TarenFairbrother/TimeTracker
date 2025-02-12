@@ -18,4 +18,12 @@ public class TimeEntryController : ControllerBase
     {
         return Ok(timeEntries);
     }
+
+    [HttpPost]
+    public ActionResult<List<TimeEntry>> CreateTimeEntry(TimeEntry timeEntry)
+    {
+        timeEntries.Add(timeEntry);
+        
+        return Ok(timeEntries);
+    }
 }
