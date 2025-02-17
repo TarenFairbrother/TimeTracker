@@ -1,3 +1,7 @@
+using Mapster;
+using TimeTracker.API.Migrations;
+using TimeTracker.Shared.Models.Project;
+
 namespace TimeTracker.API;
 
 public class Program
@@ -20,6 +24,9 @@ public class Program
         
         builder.Services.AddScoped<ITimeEntryRepository, TimeEntryRepository>();
         builder.Services.AddScoped<ITimeEntryService, TimeEntryService>();
+        
+        builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+        builder.Services.AddScoped<IProjectService, ProjectService>();
 
         var app = builder.Build();
 
@@ -29,6 +36,8 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+        
+        ConfigureMapster();
 
         app.UseHttpsRedirection();
 
@@ -38,5 +47,13 @@ public class Program
         app.MapControllers();
 
         app.Run();
+
+        void ConfigureMapster()
+        {
+            TypeAdapterConfig<Project, ProjectResponse>.NewConfig()
+                .Map(dest => dest.Description, src => src.ProjectDetails != null ? src.ProjectDetails.Description : null)
+                .Map(dest => dest.StartDate, src => src.ProjectDetails != null ? src.ProjectDetails.StartDate : null)
+                .Map(dest => dest.EndDate, src => src.ProjectDetails != null ? src.ProjectDetails.EndDate : null);
+        }
     }
 }

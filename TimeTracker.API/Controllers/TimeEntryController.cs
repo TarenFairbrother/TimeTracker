@@ -31,6 +31,12 @@ public class TimeEntryController : ControllerBase
     {
         return Ok(await this.timeEntryService.GetAllTimeEntries());
     }
+    
+    [HttpGet("project{projectId}")]
+    public async Task<ActionResult<List<TimeEntryByProductResponse>>> GetTimeEntriesByProject(int projectId)
+    {
+        return Ok(await this.timeEntryService.GetTimeEntriesByProject(projectId));
+    }
 
     [HttpPost]
     public async  Task<ActionResult<List<TimeEntryResponse>>> CreateTimeEntry(TimeEntryCreateRequest request)

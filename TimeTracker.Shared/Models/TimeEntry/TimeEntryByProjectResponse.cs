@@ -2,9 +2,8 @@
 
 namespace TimeTracker.Shared.Models.TimeEntry;
 
-public record struct TimeEntryResponse(
+public record struct TimeEntryByProductResponse(
     int Id,
-    ProjectResponse Project,
     DateTime Start,
     DateTime? End
 );

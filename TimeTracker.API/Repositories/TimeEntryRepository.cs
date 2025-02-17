@@ -11,21 +11,27 @@ public class TimeEntryRepository : ITimeEntryRepository
 
     public async Task<TimeEntry?> GetTimeEntryById(int id)
     {
-        var timeEntry = await context.TimeEntries.FindAsync(id);
+        var timeEntry = await context.TimeEntries
+            .Include(t => t.Project)
+            .ThenInclude(p => p.ProjectDetails)
+            .FirstOrDefaultAsync(x => x.Id == id);
         return timeEntry;
     }
 
     public async Task<List<TimeEntry>> GetAllTimeEntries()
     {
-        return await this.context.TimeEntries.ToListAsync();
+        return await this.context.TimeEntries
+            .Include(t => t.Project)
+            .ThenInclude(p => p.ProjectDetails)
+            .ToListAsync();
     }
 
     public async Task<List<TimeEntry>> CreateTimeEntry(TimeEntry timeEntry)
     {
         this.context.TimeEntries.Add(timeEntry);
         await this.context.SaveChangesAsync();
-        
-        return await this.context.TimeEntries.ToListAsync();
+
+        return await GetAllTimeEntries();
     }
 
     public async Task<List<TimeEntry>> UpdateTimeEntry(int id, TimeEntry timeEntry)
@@ -35,12 +41,12 @@ public class TimeEntryRepository : ITimeEntryRepository
         {
             throw new EntityNotFoundException($"Entity with id {id} was not found");
         }
-        
-        dbTimeEntry.Project = timeEntry.Project;
+
+        dbTimeEntry.ProjectId = timeEntry.ProjectId;
         dbTimeEntry.Start = timeEntry.Start;
         dbTimeEntry.End = timeEntry.End;
         dbTimeEntry.DateUpdated = DateTime.Now;
-        
+
         await this.context.SaveChangesAsync();
 
         return await GetAllTimeEntries();
@@ -53,11 +59,20 @@ public class TimeEntryRepository : ITimeEntryRepository
         {
             return null;
         }
-        
+
         this.context.TimeEntries.Remove(dbTimeEntry);
-        
+
         await this.context.SaveChangesAsync();
-        
+
         return await GetAllTimeEntries();
+    }
+
+    public async Task<List<TimeEntry>> GetTimeEntriesByProject(int projectId)
+    {
+        return await this.context.TimeEntries
+            .Include(t => t.Project)
+            .ThenInclude(p => p.ProjectDetails)
+            .Where(t => t.ProjectId == projectId)
+            .ToListAsync();
     }
 }
