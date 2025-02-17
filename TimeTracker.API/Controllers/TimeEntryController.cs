@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TimeTracker.API.Services;
-using TimeTracker.Shared.Models.TimeEntry;
 
 namespace TimeTracker.API.Controllers;
 
@@ -14,17 +12,11 @@ public class TimeEntryController : ControllerBase
     {
         this.timeEntryService = timeEntryService;
     }
-
-    [HttpGet]
-    public ActionResult<List<TimeEntryResponse>> GetAllTimeEntries()
-    {
-        return Ok(this.timeEntryService.GetAllTimeEntries());
-    }
     
     [HttpGet("{id}")]
-    public ActionResult<TimeEntryResponse> GetTimeEntryById(int id)
+    public async Task<ActionResult<TimeEntryResponse>> GetTimeEntryById(int id)
     {
-        var result = this.timeEntryService.GetTimeEntryById(id);
+        var result = await this.timeEntryService.GetTimeEntryById(id);
 
         if (result == null)
         {
@@ -34,18 +26,24 @@ public class TimeEntryController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost]
-    public ActionResult<List<TimeEntryResponse>> CreateTimeEntry(TimeEntryCreateRequest request)
+    [HttpGet]
+    public async Task<ActionResult<List<TimeEntryResponse>>> GetAllTimeEntries()
     {
-        var timeEntries = this.timeEntryService.CreateTimeEntry(request);
+        return Ok(await this.timeEntryService.GetAllTimeEntries());
+    }
+
+    [HttpPost]
+    public async  Task<ActionResult<List<TimeEntryResponse>>> CreateTimeEntry(TimeEntryCreateRequest request)
+    {
+        var timeEntries = await this.timeEntryService.CreateTimeEntry(request);
         
         return Ok(timeEntries);
     }
     
     [HttpPut("{id}")]
-    public ActionResult<List<TimeEntryResponse>> UpdateTimeEntry(int id, TimeEntryUpdateRequest request)
+    public async Task<ActionResult<List<TimeEntryResponse>>> UpdateTimeEntry(int id, TimeEntryUpdateRequest request)
     {
-        var timeEntries = this.timeEntryService.UpdateTimeEntry(id, request);
+        var timeEntries = await this.timeEntryService.UpdateTimeEntry(id, request);
 
         if (timeEntries is null)
         {
@@ -56,9 +54,9 @@ public class TimeEntryController : ControllerBase
     }
     
     [HttpDelete("{id}")]
-    public ActionResult<List<TimeEntryResponse>> DeleteTimeEntry(int id)
+    public async Task<ActionResult<List<TimeEntryResponse>>> DeleteTimeEntry(int id)
     {
-        var timeEntries = this.timeEntryService.DeleteTimeEntry(id);
+        var timeEntries = await this.timeEntryService.DeleteTimeEntry(id);
 
         if (timeEntries is null)
         {
