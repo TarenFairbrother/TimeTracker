@@ -64,9 +64,9 @@ public class TimeEntryService : ITimeEntryService
         return result.Select(t => t.Adapt<TimeEntryResponse>()).ToList();
     }
 
-    public async Task<List<TimeEntryByProductResponse>> GetTimeEntriesByProject(int projectId)
+    public async Task<List<TimeEntryResponse>> GetTimeEntriesByProject(int projectId)
     {
         var result = await this.timeEntryRepository.GetTimeEntriesByProject(projectId);
-        return result.Select(t => t.Adapt<TimeEntryByProductResponse>()).ToList();
+        return result.Select(t => t.Adapt<TimeEntryResponse>()).ToList();
     }
 }

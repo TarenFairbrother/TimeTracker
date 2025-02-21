@@ -1,5 +1,4 @@
 using Mapster;
-using TimeTracker.API.Migrations;
 using TimeTracker.Shared.Models.Project;
 
 namespace TimeTracker.API;
@@ -12,8 +11,9 @@ public class Program
 
         // Add services to the container.
 
-        builder.Services.AddControllers();
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddControllersWithViews();
+        builder.Services.AddRazorPages();
+        
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
@@ -35,16 +35,24 @@ public class Program
         {
             app.UseSwagger();
             app.UseSwaggerUI();
+            app.UseWebAssemblyDebugging();
         }
         
         ConfigureMapster();
 
         app.UseHttpsRedirection();
 
+        app.UseBlazorFrameworkFiles();
+        app.UseStaticFiles();
+        
+        app.UseRouting();
+
         app.UseAuthorization();
 
 
+        app.MapRazorPages();
         app.MapControllers();
+        app.MapFallbackToFile("index.html");
 
         app.Run();
 

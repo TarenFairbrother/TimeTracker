@@ -1,0 +1,45 @@
+﻿@page "/projects"
+@inject IProjectService ProjectService;
+@inject NavigationManager NavigationManager;
+@implements IDisposable
+
+<PageTitle>Projects</PageTitle>
+<h3>Projects</h3>
+
+<button class="btn btn-primary mb-2" @onclick="CreateProject">Create new project</button>
+
+<QuickGrid Items="ProjectService.Projects.AsQueryable()">
+    <PropertyColumn Property="p => p.Name"></PropertyColumn>
+    <PropertyColumn Property="p => p.StartDate" Format="dd/MM/yyyy" Title="Start"></PropertyColumn>
+    <PropertyColumn Property="p => p.EndDate" Format="dd/MM/yyyy" Title="End"></PropertyColumn>
+    <TemplateColumn>
+        <button class="btn btn-primary" onclick="@(() => EditProject(context.Id))">
+            <i class="oi oi-pencil" />
+        </button>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        ProjectService.OnChange += StateHasChanged;
+        await ProjectService.LoadAllProjects();
+    }
+
+    private void CreateProject()
+    {
+        NavigationManager.NavigateTo($"/project");
+    }
+    
+    private void EditProject(int id)
+    {
+        NavigationManager.NavigateTo($"/project/{id}");
+    }
+
+    public void Dispose()
+    {
+        ProjectService.OnChange -= StateHasChanged;
+    }
+
+}
