@@ -32,6 +32,12 @@ public class TimeEntryController : ControllerBase
         return Ok(await this.timeEntryService.GetAllTimeEntries());
     }
     
+    [HttpGet("{skip}/{limit}")]
+    public async Task<ActionResult<TimeEntryResponseWrapper>> GetAllTimeEntries(int skip, int limit)
+    {
+        return Ok(await this.timeEntryService.GetTimeEntries(skip, limit));
+    }
+    
     [HttpGet("project/{projectId}")]
     public async Task<ActionResult<List<TimeEntryResponse>>> GetTimeEntriesByProject(int projectId)
     {

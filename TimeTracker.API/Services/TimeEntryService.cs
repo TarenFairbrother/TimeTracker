@@ -27,6 +27,14 @@ public class TimeEntryService : ITimeEntryService
         return result.Select(t => t.Adapt<TimeEntryResponse>()).ToList();
     }
 
+    public async Task<TimeEntryResponseWrapper> GetTimeEntries(int skip, int limit)
+    {
+        var timeEntries = await this.timeEntryRepository.GetTimeEntries(skip, limit);
+        var timeEntryResponses = timeEntries.Select(t => t.Adapt<TimeEntryResponse>()).ToList();
+        var count = await this.timeEntryRepository.GetTimeEntriesCount();
+        return new TimeEntryResponseWrapper { TimeEntries = timeEntryResponses, Count = count };
+    }
+
     public async Task<List<TimeEntryResponse>> CreateTimeEntry(TimeEntryCreateRequest request)
     {
         var newEntry = request.Adapt<TimeEntry>();

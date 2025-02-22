@@ -35,6 +35,11 @@ public class TimeEntryService : ITimeEntryService
         }
     }
 
+    public async Task<TimeEntryResponseWrapper> GetTimeEntries(int skip, int limit)
+    {
+        return await this.http.GetFromJsonAsync<TimeEntryResponseWrapper>($"api/timeentry/{skip}/{limit}");
+    }
+
     public async Task<TimeEntryResponse> GetTimeEntryById(int id)
     {
         return await this.http.GetFromJsonAsync<TimeEntryResponse>($"api/timeentry/{id}");
