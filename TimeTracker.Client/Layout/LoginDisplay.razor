@@ -1,0 +1,12 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+
+<AuthorizeView>
+    <NotAuthorized>
+        <a href="register">Register</a>
+        <a href="login">Login</a>
+    </NotAuthorized>
+    <Authorized>
+        Hello, @context.User.Identity!.Name
+        <a href="logout">Logout</a>
+    </Authorized>
+</AuthorizeView>

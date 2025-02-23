@@ -1,4 +1,8 @@
-﻿@inherits LayoutComponentBase
+﻿@using Blazored.Toast
+@inherits LayoutComponentBase
+
+<BlazoredToasts Timeout="10" ShowProgressBar="true" PauseProgressOnHover="true"/>
+
 <div class="page">
     <div class="sidebar">
         <NavMenu/>
@@ -6,8 +10,7 @@
 
     <main>
         <div class="top-row px-4">
-            <ProjectSelector></ProjectSelector>
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            <LoginDisplay/>
         </div>
 
         <article class="content px-4">

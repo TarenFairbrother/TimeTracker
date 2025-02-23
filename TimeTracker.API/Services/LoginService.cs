@@ -35,12 +35,15 @@ public class LoginService : ILoginService
         {
             return new LoginResponse(false, "User doesn't exist.", null);
         }
+        
+        var roles = await this.userManager.GetRolesAsync(user);
 
         var claims = new[]
         {
             new Claim(ClaimTypes.Name, loginRequest.UserName),
             new Claim(ClaimTypes.NameIdentifier, user.Id),
-        };
+        }.ToList();
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
         
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(this.config["JwtSecurityKey"]!));

@@ -38,7 +38,7 @@ public class Program
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
         });
 
-        builder.Services.AddDefaultIdentity<User>(options =>
+        builder.Services.AddIdentity<User, IdentityRole>(options =>
             {
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireDigit = false;
@@ -46,9 +46,14 @@ public class Program
 
                 options.User.RequireUniqueEmail = true;
             })
-            .AddEntityFrameworkStores<DataContext>();
+            .AddEntityFrameworkStores<DataContext>()
+            .AddDefaultTokenProviders();
 
-        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme =JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
             .AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters

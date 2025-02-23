@@ -4,7 +4,8 @@
 @inject ITimeEntryService TimeEntryService
 @inject IProjectService ProjectService
 @inject IJSRuntime JSRuntime
-@implements IDisposable 
+@implements IDisposable
+@attribute [Authorize]
 
 @if (Id == null)
 {

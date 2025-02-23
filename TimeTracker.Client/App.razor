@@ -1,8 +1,13 @@
 ﻿@inject IProjectService ProjectService;
+@inject AuthenticationStateProvider AuthStateProvider
+@using System.Security.Claims
+@using TimeTracker.Shared.Entities
+@implements IDisposable
 
+<CascadingAuthenticationState>
 <Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
+        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
         <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
     </Found>
     <NotFound>
@@ -12,12 +17,33 @@
         </LayoutView>
     </NotFound>
 </Router>
+</CascadingAuthenticationState>
 
 @code {
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        await this.ProjectService.LoadAllProjects();
+        this.AuthStateProvider.AuthenticationStateChanged += OnAuthStateChanged;
+    }
+
+    public async void OnAuthStateChanged(Task<AuthenticationState> task)
+    {
+        var state = await task;
+        if (state != null && state.User.Identity.IsAuthenticated)
+        {
+            var roles = state.User.Claims.Where(c => c.Type == ClaimTypes.Role)
+                .Select(c => c.Value).ToList();
+
+            if (roles.Contains("Admin"))
+            {
+                await this.ProjectService.LoadAllProjects();
+            }
+        }
+    }
+
+    public void Dispose()
+    {
+        this.AuthStateProvider.AuthenticationStateChanged -= OnAuthStateChanged;
     }
 
 }
