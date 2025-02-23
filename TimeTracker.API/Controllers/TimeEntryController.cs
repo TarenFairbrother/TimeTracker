@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace TimeTracker.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class TimeEntryController : ControllerBase
 {
     private readonly ITimeEntryService timeEntryService;
@@ -11,6 +13,12 @@ public class TimeEntryController : ControllerBase
     public TimeEntryController(ITimeEntryService timeEntryService)
     {
         this.timeEntryService = timeEntryService;
+    }
+    
+    [HttpGet]
+    public async Task<ActionResult<List<TimeEntryResponse>>> GetAllTimeEntries()
+    {
+        return Ok(await this.timeEntryService.GetAllTimeEntries());
     }
     
     [HttpGet("{id}")]
@@ -24,12 +32,6 @@ public class TimeEntryController : ControllerBase
         }
         
         return Ok(result);
-    }
-
-    [HttpGet]
-    public async Task<ActionResult<List<TimeEntryResponse>>> GetAllTimeEntries()
-    {
-        return Ok(await this.timeEntryService.GetAllTimeEntries());
     }
     
     [HttpGet("project/{projectId}")]
